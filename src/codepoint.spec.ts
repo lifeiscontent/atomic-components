@@ -164,3 +164,19 @@ test(cp.isWhitespace.name, () => {
     )
   );
 });
+
+test(cp.isSurrogate.name, () => {
+  fc.assert(
+    fc.property(fc.integer({ min: 0xd800, max: 0xdfff }), cp.isSurrogate)
+  );
+});
+
+test(cp.isNull.name, () => {
+  fc.assert(fc.property(fc.constant(cp.NULL), cp.isNull));
+});
+
+// test(cp.isMaximumAllowed.name, () => {
+//   fc.assert(
+//     fc.property(fc.constant(cp.CODE_POINT_RANGE_MAX), cp.isMaximumAllowed)
+//   );
+// });

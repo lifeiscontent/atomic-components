@@ -25,6 +25,7 @@ export const NUMBER_SIGN = 35;
 export const PADDING_CHARACTER = 128;
 export const PLUS_SIGN = 43;
 export const QUOTATION_MARK = 34;
+export const REPLACEMENT_CHARACTER = 0xfffd;
 export const REVERSE_SOLIDUS = 92;
 export const RIGHT_CURLY_BRACKET = 125;
 export const RIGHT_PARENTHESIS = 41;
@@ -32,6 +33,10 @@ export const RIGHT_SQUARE_BRACKET = 93;
 export const SEMICOLON = 59;
 export const SHIFT_OUT = 14;
 export const SPACE = 32;
+
+export function isNull(codePoint: number): boolean {
+  return codePoint === NULL;
+}
 
 export function isDigit(codePoint: number): boolean {
   return codePoint >= DIGIT_ZERO && codePoint <= DIGIT_NINE;
@@ -92,6 +97,10 @@ export function isNameStart(codePoint: number): boolean {
   return isLetter(codePoint) || isNonASCII(codePoint) || codePoint === LOW_LINE;
 }
 
+export function isName(codePoint: number): boolean {
+  return isNameStart(codePoint) || isDigit(codePoint) || codePoint === HYPHEN_MINUS;
+}
+
 export function isIdentifierStart(
   firstCodePoint: number,
   secondCodePoint: number,
@@ -136,3 +145,7 @@ export function isWhitespace(codePoint: number): boolean {
 // export function isMaximumAllowed(codePoint: number): boolean {
 //   return codePoint === CODE_POINT_RANGE_MAX;
 // }
+
+export function isSurrogate(codePoint: number): boolean {
+  return codePoint >= 55296 && codePoint <= 57343;
+}

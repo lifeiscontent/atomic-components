@@ -259,6 +259,56 @@ export default class Lexer {
 
     this.addToken(TokenName.WHITESPACE);
   }
+  escapedOffset(): number {
+    const next = this.advance();
+    if (CodePoint.isHexDigit(next)) {
+      for (let i = 0; i < 5; i++) {
+        if (!CodePoint.isHexDigit(this.peek())) {
+          break;
+        }
+
+        this.advance();
+      }
+
+      const hexDigits = parseInt(
+        this.source.substring(this.start + 1, this.current),
+        16
+      );
+
+      if (CodePoint.isWhitespace(this.peek())) {
+        this.advance();
+      }
+
+      if (
+        hexDigits === 0 ||
+        CodePoint.isSurrogate(hexDigits) ||
+        hexDigits > CodePoint.CODE_POINT_RANGE_MAX
+      ) {
+        return -1;
+      } else {
+        return this.current;
+      }
+    } else if (this.isAtEnd()) {
+      return -1;
+    } else {
+      return this.current;
+    }
+  }
+
+  private name() {
+    let result = '';
+
+    const start = this.start;
+    const next = this.start + 1;
+
+    while(true) {
+      const next = this.advance();
+      if(CodePoint.isName(next)) {
+        result += String.fromCodePoint(next);
+      } else if (CodePoint.isValidEscape(codePoint, next)) {}
+    }
+  }
+
   private string(): void {
     while (this.peek() !== 34 && !this.isAtEnd()) {
       if (this.peek() === 10) this.line++;
@@ -266,7 +316,7 @@ export default class Lexer {
     }
 
     if (this.isAtEnd()) {
-      throw new Error(`Unterminated string at line: ${this.line}.`);
+      throw new SyntaxError(`Unterminated string at line: ${this.line}.`);
     }
 
     this.advance();
